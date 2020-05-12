@@ -1,0 +1,76 @@
+---
+title: "Q 8"
+author: "Ashrith Madan"
+date: "3/23/2020"
+output: html_document
+---
+```{r}
+library(readxl)
+Q8.df <- read_excel("~/Milgard/3 - Winter Quarter/560 - Data Mining/Assignments/Final  Exam/Q8.xlsx")
+View(Q8.df)
+
+head(Q8.df)
+```
+
+```{r}
+library(lattice)
+library(ggplot2)
+library(caret)
+library(factoextra)
+library(cluster)
+library(stringr)
+
+
+Q8.norm.values <- preProcess(Q8.df[2:5], method = c("center", "scale"))
+
+Q8.norm.df <- predict(Q8.norm.values, Q8.df[2:5])
+head(Q8.norm.df)
+Q8.df.norm <- sapply(Q8.df[2:5], scale)
+head(Q8.df.norm)
+
+d.norm <- dist(Q8.df.norm, method = "euclidean")
+
+Clust1 <- hclust(d.norm, method = "ward.D")
+plot.new()
+plot(Clust1, hang = -1, ann = FALSE)
+memb <- cutree(Clust1, k = 3)
+memb
+
+```
+
+```{r}
+library(lattice)
+library(ggplot2)
+library(caret)
+library(factoextra)
+library(cluster)
+library(stringr)
+
+distance <- get_dist(Q8.df)
+fviz_dist(distance, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
+
+k1 <- kmeans(Q8.df, centers = 1, nstart = 25)
+k2 <- kmeans(Q8.df, centers = 2, nstart = 25)
+k3 <- kmeans(Q8.df, centers = 3, nstart = 25)
+k4 <- kmeans(Q8.df, centers = 4, nstart = 25)
+
+gc()
+fviz_cluster(k1, data = Q8.df)
+fviz_cluster(k2, data = Q8.df)
+fviz_cluster(k3, data = Q8.df)
+fviz_cluster(k4, data = Q8.df)
+
+str(k1)
+str(k2)
+str(k3)
+str(k4)
+
+plot1 <- fviz_cluster(k1, geom = "point", data = Q8.df) + ggtitle("Cluster 1")
+plot2 <- fviz_cluster(k2, geom = "point", data = Q8.df) + ggtitle("Cluster 2")
+plot3 <- fviz_cluster(k3, geom = "point", data = Q8.df) + ggtitle("Cluster 3")
+plot4 <- fviz_cluster(k4, geom = "point", data = Q8.df) + ggtitle("Cluster 4")
+
+library(gridExtra)
+grid.arrange (plot1, plot2, plot3, plot4, nrow = 2)
+```
+
